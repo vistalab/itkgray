@@ -1,0 +1,30 @@
+/*=========================================================================
+
+  Program:   Insight Segmentation & Registration Toolkit
+  Module:    $RCSfile: SNAPCommon.cxx.in,v $
+  Language:  C++
+  Date:      $Date: 2007/12/10 01:23:52 $
+  Version:   $Revision: 1.1 $
+  Copyright (c) 2003 Insight Consortium. All rights reserved.
+  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even 
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     PURPOSE.  See the above copyright notices for more information.
+=========================================================================*/
+#include "SNAPCommon.h"
+
+// Non-cvs version
+const char SNAPSoftVersion[] = "ITK-SNAP @SNAP_VERSION_FULL@";
+
+// A string that appears in the user interface
+const char SNAPUISoftVersion[] = 
+  "Version @SNAP_VERSION_FULL@\n @SNAP_VERSION_RELEASE_DATE_FORMATTED@";
+
+// Release date of the current version
+const char SNAPCurrentVersionReleaseDate[] = "@SNAP_VERSION_RELEASE_DATE@";
+
+// Release date of the latest version whose user preference files are
+// incompatible with the current version and will be erased
+const char SNAPLastIncompatibleReleaseDate[] = "@SNAP_VERSION_LAST_COMPATIBLE_RELEASE_DATE@";
+

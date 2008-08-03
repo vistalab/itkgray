@@ -1,0 +1,4 @@
+If wordpad adds \r's to your lines, use this:
+
+getsnap.sh | perl -pe 's/\r$//' > getsnap2.sh
+
