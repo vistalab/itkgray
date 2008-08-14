@@ -247,11 +247,17 @@ function get_itkgray {
   make >> $logfile
   make install >> $logfile
 
-  if [ ! -f $instdir/bin/itkGray ]
+  if [ ! -f $instdir/lib/snap-1.6.0.1/InsightSNAP ]
   then
-    echo "itkGray failed to build in $instdir/bin/"
+    echo "itkGray failed to build"
     exit -1;
   fi
+  # Hack to put things in a reasonable place. TODO: fix the cmake config to do this!
+  mv $instdir/lib/snap-1.6.0.1/InsightSNAP $instdir/lib/snap-1.6.0.1/itkGray
+  rm -rf $instdir/bin
+  mv $instdir/lib/snap-1.6.0.1/* $instdir/
+  rm -rf $instdir/lib
+  
 }
 
 # -------------------------------------------------------------
@@ -263,4 +269,4 @@ get_fltk
 get_vtk
 get_itkgray
 
-echo "SNAP executable is located in $instdir/bin/InsightSNAP!"
+echo "ITKGray executable is located in $instdir/itkGray"
