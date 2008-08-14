@@ -47,9 +47,9 @@ logfile=$basedir/buildlog
 
 # Release versions for the supporting software. Change to HEAD to get
 # the most current version of the code
-CMAKE_REL="CMake-2-4-7"
-ITK_REL="ITK-3-4"
-VTK_REL="VTK-5-0-3"
+CMAKE_REL="CMake-2-6-1"
+ITK_REL="ITK-3-8"
+VTK_REL="VTK-5-0-4"
 GRAY_REL="HEAD"
 
 # -------------------------------------------------------------
@@ -224,8 +224,7 @@ function get_itkgray {
 
   # Use CVS to check out the latest source
   echo "Checking out ITK-GRAY (Release $GRAY_REL) from CVS"
-  #cvs -qd :pserver:white.stanford.edu/biac1/wandell/src/CVS co -r $GRAY_REL itkgray
-  cvs -qd /biac1/wandell/src/CVS co itkgray
+  svn co https://white.stanford.edu/repos/itkgray
 
   # Configure ITK-GRAY using CMake
   echo "Building ITK-GRAY"
