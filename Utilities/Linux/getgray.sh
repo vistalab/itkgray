@@ -222,8 +222,8 @@ function get_itk {
 function get_itkgray {
   cd $basedir/itkgray
 
-  # Use CVS to check out the latest source
-  echo "Checking out ITK-GRAY (Release $GRAY_REL) from CVS"
+  # Use svn to check out the latest source
+  echo "Checking out ITK-GRAY (Release $GRAY_REL) from subversion"
   svn co https://white.stanford.edu/repos/itkgray
 
   # Configure ITK-GRAY using CMake
