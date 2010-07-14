@@ -30,6 +30,13 @@
 #
 # *************************************************************
 
+# Build Notes:
+# For FLTK, version 1.3 produces link errors. Try 1.1.10. If you get a build 
+# error with 1.1.10, try changing line 70 of filename_list.cxx from this:
+#     int n = scandir(d, list, 0, (int(*)(const void*,const void*))sort);
+# to this:
+#     int n = scandir(d, list, 0, (int(*)(const dirent **, const dirent **))sort);
+# The code below will try to do this for you.
 
 # -------------------------------------------------------------
 # Options that the user can supply
@@ -48,9 +55,12 @@ logfile=$basedir/buildlog
 # Release versions for the supporting software. Change to HEAD to get
 # the most current version of the code
 CMAKE_REL="CMake-2-6-1"
+FLTK_REL="1.1.10"        # 1.1.9
 ITK_REL="ITK-3-8"
-VTK_REL="VTK-5-0-4"
+VTK_REL="VTK-5-4-2"      # 5-0-4
 GRAY_REL="HEAD"
+
+MKOPT="-j 8"
 
 # -------------------------------------------------------------
 # Check for necessary software
@@ -104,7 +114,7 @@ function get_cmake {
   echo "Building CMake"
   cd $basedir/cmake/CMake
   ./configure --prefix=$basedir/cmake/install >> $logfile
-  make >> $logfile
+  make $MKOPT >> $logfile
   make install >> $logfile
 
   # Test to see if everything is ok
@@ -122,8 +132,13 @@ function get_fltk {
   cd $basedir/fltk
 
   # Use SVN to check out fltk
-  echo "Checking out FLTK 1.1.7 from SVN"
-  svn co http://svn.easysw.com/public/fltk/fltk/tags/release-1.1.7/ fltk-1.1.7 >> $logfile
+  echo "Checking out FLTK (Release ${FLTK_REL}) from SVN"
+  svn co http://svn.easysw.com/public/fltk/fltk/tags/release-${FLTK_REL}/ fltk-${FLTK_REL} >> $logfile
+
+  echo "Trying to patch FLTK code to fix build error:"
+  cd $basedir/fltk/fltk-${FLTK_REL}/src
+  mv -f filename_list.cxx filename_list_ORIG.cxx
+  sed '70 s/  int n = scandir(d, list, 0, (int(\*)(const void\*,const void\*))sort);/  int n = scandir(d, list, 0, (int(\*)(const dirent \*\*, const dirent \*\*))sort);\n/' filename_list_ORIG.cxx > filename_list.cxx
 
   # Run CCMAKE in the FLTK bin directory
   echo "Building FLTK"
@@ -133,8 +148,8 @@ function get_fltk {
     -DBUILD_TESTING:BOOL=ON \
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -DCMAKE_CXX_FLAGS_RELEASE:STRING="-O3 -DNDEBUG" \
-    $basedir/fltk/fltk-1.1.7 >> $logfile
-  make >> $logfile
+    $basedir/fltk/fltk-${FLTK_REL} >> $logfile
+  make $MKOPT >> $logfile
 
   # Make sure that we have the necessary files
   for file in "bin/fluid" "bin/libfltk.a"
@@ -171,7 +186,7 @@ function get_vtk {
     -DVTK_USE_PATENTED:BOOL=ON \
     -DCMAKE_CXX_FLAGS_RELEASE:STRING="-O3 -DNDEBUG" \
     $basedir/vtk/VTK >> $logfile
-  make >> $logfile
+  make $MKOPT >> $logfile
 
   # Check whether the necessary libraries built
   for lib in "Common" "IO" "Graphics" "Imaging" "Filtering"
@@ -203,7 +218,7 @@ function get_itk {
     -DCMAKE_BUILD_TYPE:STRING=Release \
     -DCMAKE_CXX_FLAGS_RELEASE:STRING="-O3 -DNDEBUG" \
     $basedir/itk/Insight >> $logfile
-  make >> $logfile
+  make $MKOPT >> $logfile
 
   # Check whether the necessary libraries built
   for lib in "Common" "IO" "BasicFilters" "Algorithms"
@@ -244,7 +259,7 @@ function get_itkgray {
     $basedir/itkgray/itkgray >> $logfile
 
   # Make only in the GRAY directory
-  make >> $logfile
+  make $MKOPT >> $logfile
   make install >> $logfile
 
   if [ ! -f $instdir/lib/snap-1.6.0.1/InsightSNAP ]
@@ -263,9 +278,9 @@ function get_itkgray {
 # -------------------------------------------------------------
 # Perform the actual build tasks
 # -------------------------------------------------------------
-get_cmake
-get_itk
-get_fltk
+#get_cmake
+#get_itk
+#get_fltk
 get_vtk
 get_itkgray
 
